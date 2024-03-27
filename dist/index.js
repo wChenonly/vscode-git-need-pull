@@ -52,7 +52,8 @@ async function activate(context) {
   const workspaceFolders = import_vscode.workspace.workspaceFolders;
   if (!workspaceFolders || workspaceFolders.length === 0)
     return;
-  const isNeedPull = await checkGitRepoUpdate(workspaceFolders[0].uri);
+  const uri = workspaceFolders[0].uri;
+  const isNeedPull = await checkGitRepoUpdate(uri);
   const isNeedPullText = "ClickUpdate";
   const statusBar = import_vscode.window.createStatusBarItem(import_vscode.StatusBarAlignment.Left, 0);
   statusBar.command = "gitPull";
@@ -62,17 +63,14 @@ async function activate(context) {
     if (!isNeedPull)
       return;
     import_vscode.window.showInformationMessage("start git pull");
-    (0, import_node_child_process2.exec)(
-      `git -C ${workspaceFolders[0].uri.path} pull`,
-      (error, _stdout, stderr) => {
-        if (error || stderr) {
-          import_vscode.window.showErrorMessage("git pull error");
-          return;
-        }
-        import_vscode.window.showInformationMessage("git pull success");
-        statusBar.hide();
+    (0, import_node_child_process2.exec)(`git -C ${uri.path} pull`, (error, _stdout, stderr) => {
+      if (error || stderr) {
+        import_vscode.window.showErrorMessage("git pull error");
+        return;
       }
-    );
+      import_vscode.window.showInformationMessage("git pull success");
+      statusBar.hide();
+    });
   });
   context.subscriptions.push(disposable);
 }
