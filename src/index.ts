@@ -12,8 +12,8 @@ export async function activate(context: ExtensionContext) {
   const workspaceFolders = workspace.workspaceFolders
   if (!workspaceFolders || workspaceFolders.length === 0)
     return
-
-  const isNeedPull = await checkGitRepoUpdate(workspaceFolders[0].uri)
+  const uri = workspaceFolders[0].uri
+  const isNeedPull = await checkGitRepoUpdate(uri)
   const isNeedPullText = 'ClickUpdate'
 
   const statusBar = window.createStatusBarItem(StatusBarAlignment.Left, 0)
@@ -26,18 +26,15 @@ export async function activate(context: ExtensionContext) {
     if (!isNeedPull)
       return
     window.showInformationMessage('start git pull')
-    exec(
-      `git -C ${workspaceFolders[0].uri.path} pull`,
-      (error, _stdout, stderr) => {
-        if (error || stderr) {
-          window.showErrorMessage('git pull error')
-          return
-        }
+    exec(`git -C ${uri.path} pull`, (error, _stdout, stderr) => {
+      if (error || stderr) {
+        window.showErrorMessage('git pull error')
+        return
+      }
 
-        window.showInformationMessage('git pull success')
-        statusBar.hide()
-      },
-    )
+      window.showInformationMessage('git pull success')
+      statusBar.hide()
+    })
   })
 
   context.subscriptions.push(disposable)
