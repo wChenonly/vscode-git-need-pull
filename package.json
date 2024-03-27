@@ -2,7 +2,7 @@
   "publisher": "wChenonly",
   "name": "git-need-pull",
   "displayName": "git-need-pull",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "packageManager": "pnpm@8.15.5",
   "description": "Check the status bar to see if there is a code update in the current git repository.",
   "author": "wChenonly",
